@@ -15,6 +15,7 @@ import { ColorHelper } from '../common/color.helper';
 import { LegendOptions, LegendPosition } from '../common/types/legend.model';
 import { ScaleType } from '../common/types/scale-type.enum';
 import { ViewDimensions } from '../common/types/view-dimension.interface';
+import { select } from 'd3-selection';
 import { calculateViewDimensions } from '../common/view-dimensions.helper';
 import { DataItem } from '../models/chart-data.model';
 
@@ -45,6 +46,9 @@ import { DataItem } from '../models/chart-data.model';
           [maxTickLength]="maxXAxisTickLength"
           [tickFormatting]="xAxisTickFormatting"
           [ticks]="xAxisTicks"
+          [referenceLines]="referenceLines"
+          [showRefLines]="showRefLines"
+          [showRefLabels]="showRefLabels"
           [wrapTicks]="wrapTicks"
           (dimensionsChanged)="updateXAxisHeight($event)"
         ></svg:g>
@@ -104,6 +108,9 @@ export class BarHorizontalComponent extends BaseChartComponent {
   @Input() xAxisLabel: string;
   @Input() yAxisLabel: string;
   @Input() tooltipDisabled: boolean = false;
+  @Input() referenceLines: any;
+  @Input() showRefLines: boolean = false;
+  @Input() showRefLabels: boolean = false;
   @Input() gradient: boolean;
   @Input() showGridLines: boolean = true;
   @Input() activeEntries: any[] = [];
@@ -183,6 +190,12 @@ export class BarHorizontalComponent extends BaseChartComponent {
     this.legendOptions = this.getLegendOptions();
 
     this.transform = `translate(${this.dims.xOffset} , ${this.margin[0]})`;
+
+    if (this.showRefLines) {
+      const parent = select(this.chartElement.nativeElement).select('.bar-chart').node() as HTMLElement;
+      const refLines = select(this.chartElement.nativeElement).selectAll('.ref-line').nodes() as HTMLElement[];
+      refLines.forEach(line => parent.appendChild(line));
+    }
   }
 
   getXScale(): any {
