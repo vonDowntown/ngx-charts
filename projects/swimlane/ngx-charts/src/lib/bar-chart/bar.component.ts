@@ -36,7 +36,8 @@ import { id } from '../utils/id';
     />
     <!-- Bar markers -->
     <svg:g *ngFor="let annotation of annotations || []">
-      <svg:line *ngIf="orientation === 'vertical'"
+      <svg:line
+        *ngIf="orientation === 'vertical'"
         [attr.x1]="x - 0.2 * width"
         [attr.y1]="annotation.position"
         [attr.x2]="x + 1.2 * width"
@@ -45,7 +46,8 @@ import { id } from '../utils/id';
         stroke-width="2"
         stroke-dasharray="5,3"
       />
-      <svg:line *ngIf="orientation === 'horizontal'"
+      <svg:line
+        *ngIf="orientation === 'horizontal'"
         [attr.x1]="annotation.position"
         [attr.y1]="y - 0.2 * height"
         [attr.x2]="annotation.position"
@@ -54,19 +56,25 @@ import { id } from '../utils/id';
         stroke-width="2"
         stroke-dasharray="5,3"
       />
-      <svg:text *ngIf="showAnnotationLabels && orientation === 'vertical'"
+      <svg:text
+        *ngIf="showAnnotationLabels && orientation === 'vertical'"
         [attr.x]="x + 2"
         [attr.y]="annotation.position - 6"
         alignment-baseline="middle"
         font-size="11px"
         [attr.fill]="annotation.color || '#000'"
-      >{{annotation.label}}</svg:text>
-      <svg:text *ngIf="showAnnotationLabels && orientation === 'horizontal'"
+      >
+        {{ annotation.label }}
+      </svg:text>
+      <svg:text
+        *ngIf="showAnnotationLabels && orientation === 'horizontal'"
         [attr.x]="annotation.position + 3"
         [attr.y]="y + height / 2"
         font-size="11px"
         [attr.fill]="annotation.color || '#000'"
-      >{{annotation.label}}</svg:text>
+      >
+        {{ annotation.label }}
+      </svg:text>
     </svg:g>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

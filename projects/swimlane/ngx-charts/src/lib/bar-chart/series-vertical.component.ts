@@ -208,7 +208,9 @@ export class SeriesVerticalComponent implements OnChanges {
 
       if (this.type === BarChartType.Standard) {
         bar.height = Math.abs(this.yScale(value) - this.yScale(yScaleMin));
-        if (value === 0.0) { bar.height = 0; }
+        if (value === 0.0) {
+          bar.height = 0;
+        }
         bar.x = this.xScale(label);
 
         if (value < 0) {
