@@ -1,13 +1,13 @@
-import { data as countries } from 'emoji-flags';
 import {
-  SingleSeries,
-  MultiSeries,
-  BubbleChartMultiSeries,
   BoxChartMultiSeries,
+  BubbleChartMultiSeries,
+  MultiSeries,
+  SankeyData,
   Series,
-  TreeMapData,
-  SankeyData
+  SingleSeries,
+  TreeMapData
 } from '@swimlane/ngx-charts/models/chart-data.model';
+import { data as countries } from 'emoji-flags';
 
 export const single: SingleSeries = [
   {
@@ -15,14 +15,38 @@ export const single: SingleSeries = [
     value: 40632,
     extra: {
       code: 'de'
-    }
+    },
+    annotations: [
+      {
+        value: 20000,
+        label: 'Marker 1',
+        color: '#ff0000'
+      },
+      {
+        value: 50000,
+        label: 'Marker 2',
+        color: '#00ff00'
+      }
+    ]
   },
   {
     name: 'United States',
-    value: 50000,
+    value: 40000,
     extra: {
       code: 'us'
-    }
+    },
+    annotations: [
+      {
+        value: 10000,
+        label: 'Marker 1',
+        color: '#ff0000'
+      },
+      {
+        value: 15000,
+        label: 'Marker 2',
+        color: '#00ff00'
+      }
+    ]
   },
   {
     name: 'France',
@@ -63,7 +87,19 @@ export const multi: MultiSeries = [
         value: 40632,
         extra: {
           code: 'de'
-        }
+        },
+        annotations: [
+          {
+            value: 20000,
+            label: 'Marker 1',
+            color: '#ff0000'
+          },
+          {
+            value: 50000,
+            label: 'Marker 2',
+            color: '#00ff00'
+          }
+        ]
       },
       {
         name: '2000',

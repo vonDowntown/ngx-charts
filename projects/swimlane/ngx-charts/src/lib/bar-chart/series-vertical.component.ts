@@ -1,27 +1,27 @@
+import { animate, style, transition, trigger } from '@angular/animations';
+import { isPlatformServer } from '@angular/common';
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  OnChanges,
   ChangeDetectionStrategy,
-  TemplateRef,
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  OnChanges,
+  Output,
   PLATFORM_ID,
-  Inject
+  TemplateRef
 } from '@angular/core';
-import { trigger, style, animate, transition } from '@angular/animations';
-import { formatLabel, escapeLabel } from '../common/label.helper';
-import { DataItem, StringOrNumberOrDate } from '../models/chart-data.model';
+import { ColorHelper } from '../common/color.helper';
+import { escapeLabel, formatLabel } from '../common/label.helper';
 import { PlacementTypes } from '../common/tooltip/position';
 import { StyleTypes } from '../common/tooltip/style.type';
-import { ColorHelper } from '../common/color.helper';
-import { BarChartType } from './types/bar-chart-type.enum';
-import { D0Types } from './types/d0-type.enum';
-import { Bar } from './types/bar.model';
-import { ViewDimensions } from '../common/types/view-dimension.interface';
 import { BarOrientation } from '../common/types/bar-orientation.enum';
 import { ScaleType } from '../common/types/scale-type.enum';
-import { isPlatformServer } from '@angular/common';
+import { ViewDimensions } from '../common/types/view-dimension.interface';
+import { DataItem, StringOrNumberOrDate } from '../models/chart-data.model';
+import { BarChartType } from './types/bar-chart-type.enum';
+import { Bar } from './types/bar.model';
+import { D0Types } from './types/d0-type.enum';
 
 @Component({
   selector: 'g[ngx-charts-series-vertical]',
@@ -56,6 +56,8 @@ import { isPlatformServer } from '@angular/common';
         [tooltipContext]="bar.data"
         [noBarWhenZero]="noBarWhenZero"
         [animations]="animations"
+        [annotations]="bar.annotations"
+        [showAnnotationLabels]="showAnnotationLabels"
       ></svg:g>
     </svg:g>
     <svg:g *ngIf="isSSR">
@@ -86,6 +88,8 @@ import { isPlatformServer } from '@angular/common';
         [tooltipContext]="bar.data"
         [noBarWhenZero]="noBarWhenZero"
         [animations]="animations"
+        [annotations]="bar.annotations"
+        [showAnnotationLabels]="showAnnotationLabels"
       ></svg:g>
     </svg:g>
     <svg:g *ngIf="showDataLabel">
@@ -133,6 +137,7 @@ export class SeriesVerticalComponent implements OnChanges {
   @Input() showDataLabel: boolean = false;
   @Input() dataLabelFormatting: any;
   @Input() noBarWhenZero: boolean = true;
+  @Input() showAnnotationLabels: boolean = true;
 
   @Output() select: EventEmitter<DataItem> = new EventEmitter();
   @Output() activate = new EventEmitter();
@@ -197,17 +202,29 @@ export class SeriesVerticalComponent implements OnChanges {
         formattedLabel,
         height: 0,
         x: 0,
-        y: 0
+        y: 0,
+        annotations: []
       };
 
       if (this.type === BarChartType.Standard) {
         bar.height = Math.abs(this.yScale(value) - this.yScale(yScaleMin));
+        if (value === 0.0) {
+          bar.height = 0;
+        }
         bar.x = this.xScale(label);
 
         if (value < 0) {
           bar.y = this.yScale(0);
         } else {
           bar.y = this.yScale(value);
+        }
+        for (const a of d.annotations || []) {
+          const position = this.yScale(a.value);
+          bar.annotations.push({
+            position,
+            label: a.label,
+            color: a.color
+          });
         }
       } else if (this.type === BarChartType.Stacked) {
         const offset0 = d0[d0Type];
@@ -253,7 +270,7 @@ export class SeriesVerticalComponent implements OnChanges {
       }
 
       let tooltipLabel = formattedLabel;
-      bar.ariaLabel = formattedLabel + ' ' + value.toLocaleString();
+      bar.ariaLabel = formattedLabel + ' ' + value?.toLocaleString();
       if (this.seriesName !== null && this.seriesName !== undefined) {
         tooltipLabel = `${this.seriesName} • ${formattedLabel}`;
         bar.data.series = this.seriesName;
@@ -265,7 +282,7 @@ export class SeriesVerticalComponent implements OnChanges {
         : `
         <span class="tooltip-label">${escapeLabel(tooltipLabel)}</span>
         <span class="tooltip-val">${
-          this.dataLabelFormatting ? this.dataLabelFormatting(value) : value.toLocaleString()
+          this.dataLabelFormatting ? this.dataLabelFormatting(value) : value?.toLocaleString()
         }</span>
       `;
 

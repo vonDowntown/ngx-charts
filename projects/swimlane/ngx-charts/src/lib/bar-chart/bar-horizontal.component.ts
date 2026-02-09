@@ -1,22 +1,23 @@
 import {
+  ChangeDetectionStrategy,
   Component,
+  ContentChild,
+  EventEmitter,
   Input,
   Output,
-  EventEmitter,
-  ViewEncapsulation,
-  ChangeDetectionStrategy,
-  ContentChild,
-  TemplateRef
+  TemplateRef,
+  ViewEncapsulation
 } from '@angular/core';
 import { scaleBand, scaleLinear } from 'd3-scale';
 
-import { calculateViewDimensions } from '../common/view-dimensions.helper';
-import { ColorHelper } from '../common/color.helper';
+import { select } from 'd3-selection';
 import { BaseChartComponent } from '../common/base-chart.component';
+import { ColorHelper } from '../common/color.helper';
 import { LegendOptions, LegendPosition } from '../common/types/legend.model';
 import { ScaleType } from '../common/types/scale-type.enum';
 import { ViewDimensions } from '../common/types/view-dimension.interface';
-import { select } from 'd3-selection';
+import { calculateViewDimensions } from '../common/view-dimensions.helper';
+import { DataItem } from '../models/chart-data.model';
 
 @Component({
   selector: 'ngx-charts-bar-horizontal',
@@ -82,6 +83,7 @@ import { select } from 'd3-selection';
           [showDataLabel]="showDataLabel"
           [dataLabelFormatting]="dataLabelFormatting"
           [noBarWhenZero]="noBarWhenZero"
+          [showAnnotationLabels]="showAnnotationLabels"
           (select)="onClick($event)"
           (activate)="onActivate($event)"
           (deactivate)="onDeactivate($event)"
@@ -131,6 +133,7 @@ export class BarHorizontalComponent extends BaseChartComponent {
   @Input() dataLabelFormatting: any;
   @Input() noBarWhenZero: boolean = true;
   @Input() wrapTicks = false;
+  @Input() showAnnotationLabels: boolean = true;
 
   @Output() activate: EventEmitter<any> = new EventEmitter();
   @Output() deactivate: EventEmitter<any> = new EventEmitter();
@@ -211,7 +214,11 @@ export class BarHorizontalComponent extends BaseChartComponent {
   }
 
   getXDomain(): [number, number] {
-    const values = this.results.map(d => d.value);
+    const items = this.results as DataItem[];
+    const dataValues = items.filter(d => d.value || !this.noBarWhenZero).map(d => d.value);
+    const annotationsValues = items.flatMap(r => r.annotations || []).map(a => a.value);
+    const values = [...dataValues, ...annotationsValues];
+
     const min = this.xScaleMin ? Math.min(this.xScaleMin, ...values) : Math.min(0, ...values);
 
     const max = this.xScaleMax ? Math.max(this.xScaleMax, ...values) : Math.max(0, ...values);

@@ -1,10 +1,10 @@
 {
-  "name": "@swimlane/ngx-charts",
-  "version": "23.1.0",
+  "name": "@sopherio/ngx-charts",
+  "version": "23.2.0",
   "description": "Declarative Charting Framework for Angular",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/swimlane/ngx-charts.git"
+    "url": "git+https://github.com/sopherio/ngx-charts.git"
   },
   "keywords": [
     "angular",
@@ -26,9 +26,9 @@
   "author": "Swimlane",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/swimlane/ngx-charts/issues"
+    "url": "https://github.com/sopherio/ngx-charts/issues"
   },
-  "homepage": "https://github.com/swimlane/ngx-charts#readme",
+  "homepage": "https://github.com/sopherio/ngx-charts#readme",
   "peerDependencies": {
     "@angular/animations": "18.x || 19.x || 20.x",
     "@angular/cdk": "18.x || 19.x || 20.x",

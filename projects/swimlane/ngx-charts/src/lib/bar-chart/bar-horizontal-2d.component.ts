@@ -1,28 +1,28 @@
-import {
-  Component,
-  Input,
-  ViewEncapsulation,
-  Output,
-  EventEmitter,
-  ChangeDetectionStrategy,
-  ContentChild,
-  TemplateRef,
-  TrackByFunction
-} from '@angular/core';
+import { animate, style, transition, trigger } from '@angular/animations';
 import { isPlatformServer } from '@angular/common';
-import { trigger, style, animate, transition } from '@angular/animations';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ContentChild,
+  EventEmitter,
+  Input,
+  Output,
+  TemplateRef,
+  TrackByFunction,
+  ViewEncapsulation
+} from '@angular/core';
 
 import { scaleBand, scaleLinear } from 'd3-scale';
 
-import { calculateViewDimensions } from '../common/view-dimensions.helper';
 import { ColorHelper } from '../common/color.helper';
+import { calculateViewDimensions } from '../common/view-dimensions.helper';
 import { DataItem } from '../models/chart-data.model';
 
 import { BaseChartComponent } from '../common/base-chart.component';
-import { ScaleType } from '../common/types/scale-type.enum';
-import { LegendOptions, LegendPosition } from '../common/types/legend.model';
-import { ViewDimensions } from '../common/types/view-dimension.interface';
 import { BarOrientation } from '../common/types/bar-orientation.enum';
+import { LegendOptions, LegendPosition } from '../common/types/legend.model';
+import { ScaleType } from '../common/types/scale-type.enum';
+import { ViewDimensions } from '../common/types/view-dimension.interface';
 
 @Component({
   selector: 'ngx-charts-bar-horizontal-2d',
@@ -101,6 +101,7 @@ import { BarOrientation } from '../common/types/bar-orientation.enum';
               [showDataLabel]="showDataLabel"
               [dataLabelFormatting]="dataLabelFormatting"
               [noBarWhenZero]="noBarWhenZero"
+              [showAnnotationLabels]="showAnnotationLabels"
               (select)="onClick($event, group)"
               (activate)="onActivate($event, group)"
               (deactivate)="onDeactivate($event, group)"
@@ -130,6 +131,7 @@ import { BarOrientation } from '../common/types/bar-orientation.enum';
               [showDataLabel]="showDataLabel"
               [dataLabelFormatting]="dataLabelFormatting"
               [noBarWhenZero]="noBarWhenZero"
+              [showAnnotationLabels]="showAnnotationLabels"
               (select)="onClick($event, group)"
               (activate)="onActivate($event, group)"
               (deactivate)="onDeactivate($event, group)"
@@ -184,11 +186,13 @@ export class BarHorizontal2DComponent extends BaseChartComponent {
   @Input() barPadding: number = 8;
   @Input() roundDomains: boolean = false;
   @Input() roundEdges: boolean = true;
+  @Input() xScaleMin: number;
   @Input() xScaleMax: number;
   @Input() showDataLabel: boolean = false;
   @Input() dataLabelFormatting: any;
   @Input() noBarWhenZero: boolean = true;
   @Input() wrapTicks = false;
+  @Input() showAnnotationLabels: boolean = true;
 
   @Output() activate: EventEmitter<any> = new EventEmitter();
   @Output() deactivate: EventEmitter<any> = new EventEmitter();
@@ -317,14 +321,20 @@ export class BarHorizontal2DComponent extends BaseChartComponent {
 
     for (const group of this.results) {
       for (const d of group.series) {
+        const annotationsValues = (d.annotations || []).map(a => a.value);
+        domain.push(...annotationsValues);
+        if (this.noBarWhenZero && d.value === 0) {
+          continue;
+        }
         if (!domain.includes(d.value)) {
           domain.push(d.value);
         }
       }
     }
 
-    const min = Math.min(0, ...domain);
+    const min = this.xScaleMin ? Math.min(this.xScaleMin, ...domain) : Math.min(0, ...domain);
     const max = this.xScaleMax ? Math.max(this.xScaleMax, ...domain) : Math.max(0, ...domain);
+
     return [min, max];
   }
 

@@ -1,26 +1,26 @@
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import {
-  ElementRef,
-  NgZone,
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
-  Input,
-  Output,
+  ElementRef,
   EventEmitter,
-  AfterViewInit,
-  OnDestroy,
-  OnChanges,
-  SimpleChanges,
-  PLATFORM_ID,
   Inject,
-  OnInit
+  Input,
+  NgZone,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  PLATFORM_ID,
+  SimpleChanges
 } from '@angular/core';
 
 import { fromEvent as observableFromEvent } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { VisibilityObserver } from '../utils/visibility-observer';
-import { isDate } from '../utils/types';
 import { Color } from '../utils/color-sets';
+import { isDate } from '../utils/types';
+import { VisibilityObserver } from '../utils/visibility-observer';
 import { ScaleType } from './types/scale-type.enum';
 import { ViewDimensions } from './types/view-dimension.interface';
 
@@ -213,6 +213,14 @@ export class BaseChartComponent implements OnChanges, AfterViewInit, OnDestroy, 
 
       if (item['target'] !== undefined) {
         copy['target'] = item['target'];
+      }
+
+      if (item['annotations'] !== undefined) {
+        copy['annotations'] = [];
+        for (const annotation of item['annotations']) {
+          const annotationCopy = Object.assign({}, annotation);
+          copy['annotations'].push(annotationCopy);
+        }
       }
 
       results.push(copy);

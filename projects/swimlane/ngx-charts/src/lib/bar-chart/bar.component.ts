@@ -11,10 +11,10 @@ import {
 } from '@angular/core';
 import { select } from 'd3-selection';
 import { roundedRect } from '../common/shape.helper';
-import { id } from '../utils/id';
-import { DataItem } from '../models/chart-data.model';
 import { BarOrientation } from '../common/types/bar-orientation.enum';
 import { Gradient } from '../common/types/gradient.interface';
+import { Annotation, DataItem } from '../models/chart-data.model';
+import { id } from '../utils/id';
 
 @Component({
   selector: 'g[ngx-charts-bar]',
@@ -34,6 +34,48 @@ import { Gradient } from '../common/types/gradient.interface';
       [attr.fill]="hasGradient ? gradientFill : fill"
       (click)="select.emit(data)"
     />
+    <!-- Bar markers -->
+    <svg:g *ngFor="let annotation of annotations || []">
+      <svg:line
+        *ngIf="orientation === 'vertical'"
+        [attr.x1]="x - 0.2 * width"
+        [attr.y1]="annotation.position"
+        [attr.x2]="x + 1.2 * width"
+        [attr.y2]="annotation.position"
+        [attr.stroke]="annotation.color || '#000'"
+        stroke-width="2"
+        stroke-dasharray="5,3"
+      />
+      <svg:line
+        *ngIf="orientation === 'horizontal'"
+        [attr.x1]="annotation.position"
+        [attr.y1]="y - 0.2 * height"
+        [attr.x2]="annotation.position"
+        [attr.y2]="y + 1.2 * height"
+        [attr.stroke]="annotation.color || '#000'"
+        stroke-width="2"
+        stroke-dasharray="5,3"
+      />
+      <svg:text
+        *ngIf="showAnnotationLabels && orientation === 'vertical'"
+        [attr.x]="x + 2"
+        [attr.y]="annotation.position - 6"
+        alignment-baseline="middle"
+        font-size="11px"
+        [attr.fill]="annotation.color || '#000'"
+      >
+        {{ annotation.label }}
+      </svg:text>
+      <svg:text
+        *ngIf="showAnnotationLabels && orientation === 'horizontal'"
+        [attr.x]="annotation.position + 3"
+        [attr.y]="y + height / 2"
+        font-size="11px"
+        [attr.fill]="annotation.color || '#000'"
+      >
+        {{ annotation.label }}
+      </svg:text>
+    </svg:g>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false
@@ -54,6 +96,8 @@ export class BarComponent implements OnChanges {
   @Input() animations: boolean = true;
   @Input() ariaLabel: string;
   @Input() noBarWhenZero: boolean = true;
+  @Input() annotations: Annotation[] = [];
+  @Input() showAnnotationLabels: boolean = true;
 
   @Output() select: EventEmitter<DataItem> = new EventEmitter();
   @Output() activate: EventEmitter<DataItem> = new EventEmitter();

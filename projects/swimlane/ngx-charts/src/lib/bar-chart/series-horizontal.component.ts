@@ -1,16 +1,16 @@
-import { Component, Input, Output, EventEmitter, OnChanges, ChangeDetectionStrategy, TemplateRef } from '@angular/core';
-import { trigger, style, animate, transition } from '@angular/animations';
-import { formatLabel, escapeLabel } from '../common/label.helper';
-import { DataItem, StringOrNumberOrDate } from '../models/chart-data.model';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, TemplateRef } from '@angular/core';
 import { ColorHelper } from '../common/color.helper';
+import { escapeLabel, formatLabel } from '../common/label.helper';
 import { PlacementTypes } from '../common/tooltip/position';
 import { StyleTypes } from '../common/tooltip/style.type';
+import { BarOrientation } from '../common/types/bar-orientation.enum';
+import { ScaleType } from '../common/types/scale-type.enum';
+import { ViewDimensions } from '../common/types/view-dimension.interface';
+import { DataItem, StringOrNumberOrDate } from '../models/chart-data.model';
 import { BarChartType } from './types/bar-chart-type.enum';
 import { Bar } from './types/bar.model';
 import { D0Types } from './types/d0-type.enum';
-import { ViewDimensions } from '../common/types/view-dimension.interface';
-import { BarOrientation } from '../common/types/bar-orientation.enum';
-import { ScaleType } from '../common/types/scale-type.enum';
 
 @Component({
   selector: 'g[ngx-charts-series-horizontal]',
@@ -43,6 +43,8 @@ import { ScaleType } from '../common/types/scale-type.enum';
       [tooltipTemplate]="tooltipTemplate"
       [tooltipContext]="bar.data"
       [noBarWhenZero]="noBarWhenZero"
+      [annotations]="bar.annotations"
+      [showAnnotationLabels]="showAnnotationLabels"
     ></svg:g>
     <svg:g *ngIf="showDataLabel">
       <svg:g
@@ -89,6 +91,7 @@ export class SeriesHorizontal implements OnChanges {
   @Input() showDataLabel: boolean = false;
   @Input() dataLabelFormatting: any;
   @Input() noBarWhenZero: boolean = true;
+  @Input() showAnnotationLabels: boolean = true;
 
   @Output() select: EventEmitter<DataItem> = new EventEmitter();
   @Output() activate = new EventEmitter();
@@ -132,19 +135,31 @@ export class SeriesHorizontal implements OnChanges {
         label,
         roundEdges,
         data: d,
-        formattedLabel
+        formattedLabel,
+        annotations: []
       };
 
       bar.height = this.yScale.bandwidth();
 
       if (this.type === BarChartType.Standard) {
         bar.width = Math.abs(this.xScale(value) - this.xScale(xScaleMin));
+        if (value === 0.0) {
+          bar.height = 0;
+        }
         if (value < 0) {
           bar.x = this.xScale(value);
         } else {
           bar.x = this.xScale(xScaleMin);
         }
         bar.y = this.yScale(label);
+        for (const a of d.annotations || []) {
+          const position = this.xScale(a.value);
+          bar.annotations.push({
+            position,
+            label: a.label,
+            color: a.color
+          });
+        }
       } else if (this.type === BarChartType.Stacked) {
         const offset0 = d0[d0Type];
         const offset1 = offset0 + value;
@@ -189,7 +204,7 @@ export class SeriesHorizontal implements OnChanges {
       }
 
       let tooltipLabel = formattedLabel;
-      bar.ariaLabel = formattedLabel + ' ' + value.toLocaleString();
+      bar.ariaLabel = formattedLabel + ' ' + value?.toLocaleString();
       if (this.seriesName !== null && this.seriesName !== undefined) {
         tooltipLabel = `${this.seriesName} • ${formattedLabel}`;
         bar.data.series = this.seriesName;
@@ -201,7 +216,7 @@ export class SeriesHorizontal implements OnChanges {
         : `
         <span class="tooltip-label">${escapeLabel(tooltipLabel)}</span>
         <span class="tooltip-val">${
-          this.dataLabelFormatting ? this.dataLabelFormatting(value) : value.toLocaleString()
+          this.dataLabelFormatting ? this.dataLabelFormatting(value) : value?.toLocaleString()
         }</span>
       `;
 

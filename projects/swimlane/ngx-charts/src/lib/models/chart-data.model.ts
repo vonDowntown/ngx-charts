@@ -11,6 +11,13 @@ export interface DataItem {
   min?: number;
   max?: number;
   label?: string;
+  annotations?: Annotation[];
+}
+
+export interface Annotation {
+  value: number;
+  label: string;
+  color?: string;
 }
 
 export interface SingleSeries extends Array<DataItem> {}
