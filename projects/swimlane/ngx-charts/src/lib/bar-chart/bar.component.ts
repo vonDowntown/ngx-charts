@@ -38,9 +38,9 @@ import { id } from '../utils/id';
     <svg:g *ngFor="let annotation of annotations || []">
       <svg:line
         *ngIf="orientation === 'vertical'"
-        [attr.x1]="x - 0.2 * width"
+        [attr.x1]="x - barPadding / 2"
         [attr.y1]="annotation.position"
-        [attr.x2]="x + 1.2 * width"
+        [attr.x2]="x + barPadding / 2 + width"
         [attr.y2]="annotation.position"
         [attr.stroke]="annotation.color || '#000'"
         stroke-width="2"
@@ -49,9 +49,9 @@ import { id } from '../utils/id';
       <svg:line
         *ngIf="orientation === 'horizontal'"
         [attr.x1]="annotation.position"
-        [attr.y1]="y - 0.2 * height"
+        [attr.y1]="y - barPadding / 2"
         [attr.x2]="annotation.position"
-        [attr.y2]="y + 1.2 * height"
+        [attr.y2]="y + barPadding / 2 + height"
         [attr.stroke]="annotation.color || '#000'"
         stroke-width="2"
         stroke-dasharray="5,3"
@@ -69,7 +69,7 @@ import { id } from '../utils/id';
       <svg:text
         *ngIf="showAnnotationLabels && orientation === 'horizontal'"
         [attr.x]="annotation.position + 3"
-        [attr.y]="y + height / 2"
+        [attr.y]="y + barPadding / 2 + height / 2"
         font-size="11px"
         [attr.fill]="annotation.color || '#000'"
       >
@@ -90,6 +90,7 @@ export class BarComponent implements OnChanges {
   @Input() orientation: BarOrientation;
   @Input() roundEdges: boolean = true;
   @Input() gradient: boolean = false;
+  @Input() barPadding: number = 8;
   @Input() offset: number = 0;
   @Input() isActive: boolean = false;
   @Input() stops: Gradient[];

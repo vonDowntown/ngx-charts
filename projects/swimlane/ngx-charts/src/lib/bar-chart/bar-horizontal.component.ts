@@ -75,6 +75,7 @@ import { DataItem } from '../models/chart-data.model';
           [series]="results"
           [dims]="dims"
           [gradient]="gradient"
+          [barPadding]="barPadding"
           [tooltipDisabled]="tooltipDisabled"
           [tooltipTemplate]="tooltipTemplate"
           [activeEntries]="activeEntries"

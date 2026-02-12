@@ -42,6 +42,7 @@ import { D0Types } from './types/d0-type.enum';
         [orientation]="barOrientation.Vertical"
         [roundEdges]="bar.roundEdges"
         [gradient]="gradient"
+        [barPadding]="barPadding"
         [ariaLabel]="bar.ariaLabel"
         [isActive]="isActive(bar.data)"
         (select)="onClick($event)"
@@ -74,6 +75,7 @@ import { D0Types } from './types/d0-type.enum';
         [orientation]="barOrientation.Vertical"
         [roundEdges]="bar.roundEdges"
         [gradient]="gradient"
+        [barPadding]="barPadding"
         [ariaLabel]="bar.ariaLabel"
         [isActive]="isActive(bar.data)"
         (select)="onClick($event)"
@@ -128,6 +130,7 @@ export class SeriesVerticalComponent implements OnChanges {
   @Input() yScale;
   @Input() colors: ColorHelper;
   @Input() gradient: boolean;
+  @Input() barPadding: number = 8;
   @Input() activeEntries: DataItem[];
   @Input() seriesName: StringOrNumberOrDate;
   @Input() tooltipDisabled: boolean = false;

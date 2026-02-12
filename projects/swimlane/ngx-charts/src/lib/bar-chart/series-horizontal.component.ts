@@ -30,6 +30,7 @@ import { D0Types } from './types/d0-type.enum';
       [roundEdges]="bar.roundEdges"
       (select)="click($event)"
       [gradient]="gradient"
+      [barPadding]="barPadding"
       [isActive]="isActive(bar.data)"
       [ariaLabel]="bar.ariaLabel"
       [animations]="animations"
@@ -83,6 +84,7 @@ export class SeriesHorizontal implements OnChanges {
   @Input() colors: ColorHelper;
   @Input() tooltipDisabled: boolean = false;
   @Input() gradient: boolean;
+  @Input() barPadding: number = 8;
   @Input() activeEntries: DataItem[];
   @Input() seriesName: StringOrNumberOrDate;
   @Input() tooltipTemplate: TemplateRef<any>;
