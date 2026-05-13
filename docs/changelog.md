@@ -2,6 +2,15 @@
 
 ## HEAD (unreleased)
 
+## 23.1.0
+
+- Enhancement: Handle the label overflow inside the Sankey chart.
+- Enhancement: Added utility method to round off percentages in Advanced Pie Chart.
+
+## 23.0.1
+
+- Chore: Update dependencies
+
 ## 23.0.0
 
 - Enhancement: Added support for Angular 20
