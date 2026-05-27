@@ -2,6 +2,12 @@
 
 ## HEAD (unreleased)
 
+## 24.0.0-alpha.0
+
+- Enhancement: Added support for Angular 21
+- Enhancement: Migration to vitest
+- Breaking: Removing support for Angular 18 and karma
+
 ## 23.1.0
 
 - Enhancement: Handle the label overflow inside the Sankey chart.
