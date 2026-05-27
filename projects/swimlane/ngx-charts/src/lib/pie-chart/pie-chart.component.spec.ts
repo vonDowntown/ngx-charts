@@ -78,7 +78,7 @@ describe('<ngx-charts-pie>', () => {
     it('should render an arc', () => {
       const arcElement = fixture.debugElement.nativeElement.querySelector('path.arc');
 
-      const testArc: any = arc().innerRadius(0).outerRadius(180).startAngle(0).endAngle(1.0984497063524654);
+      const testArc: any = arc().innerRadius(0).outerRadius(180).startAngle(0).endAngle(1.1478366554774184);
 
       expect(arcElement.getAttribute('d')).toEqual(testArc());
     });
@@ -112,7 +112,7 @@ describe('<ngx-charts-pie>', () => {
         .innerRadius((outerRadius * 3) / 4) // default arc is 1/4 outerwidth
         .outerRadius(outerRadius)
         .startAngle(0)
-        .endAngle(1.0984497063524654);
+        .endAngle(1.1478366554774184);
 
       expect(arcElement.getAttribute('d')).toEqual(testArc());
     });
@@ -147,7 +147,7 @@ describe('<ngx-charts-pie>', () => {
         .innerRadius(outerRadius * 0.9) // default arc is 1/4 outerwidth
         .outerRadius(outerRadius)
         .startAngle(0)
-        .endAngle(1.0984497063524654);
+        .endAngle(1.1478366554774184);
 
       expect(arcElement.getAttribute('d')).toEqual(testArc());
     });
