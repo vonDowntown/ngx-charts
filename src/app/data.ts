@@ -31,7 +31,7 @@ export const single: SingleSeries = [
   },
   {
     name: 'United States',
-    value: 40000,
+    value: 50000,
     extra: {
       code: 'us'
     },
